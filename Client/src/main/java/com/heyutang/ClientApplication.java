@@ -5,6 +5,7 @@ import com.heyutang.client.LoginFrame;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.IOException;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -24,10 +25,12 @@ public class ClientApplication {
         Container loginFrameContentPane = loginFrame.getContentPane();
         JButton loginBtn = (JButton) loginFrameContentPane.getComponent(4);
         loginBtn.addActionListener(e -> {
-            clientFrame.set(loginFrame.handleLogin(loginFrameContentPane));
+            try {
+                clientFrame.set(loginFrame.handleLogin(loginFrameContentPane));
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
         });
-
-
     }
 
 

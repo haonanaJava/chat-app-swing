@@ -26,11 +26,9 @@ public class NioClient {
 
             socketChannel.register(selector, SelectionKey.OP_READ);
 
-
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
     private void readInfo() {

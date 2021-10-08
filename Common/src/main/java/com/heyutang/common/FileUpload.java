@@ -1,4 +1,4 @@
-package com.heyutang.client;
+package com.heyutang.common;
 
 import java.io.DataOutputStream;
 import java.io.FileInputStream;

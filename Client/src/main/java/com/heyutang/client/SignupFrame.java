@@ -1,17 +1,21 @@
 package com.heyutang.client;
 
-import com.heyutang.Entiry.User;
 import com.heyutang.common.FrameCreators;
-import com.heyutang.dao.UserDaoImpl;
+import com.heyutang.entiy.User;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ComponentAdapter;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.Socket;
 
-import static com.heyutang.common.Constants.SIGNUP_FAILED;
-import static com.heyutang.common.Constants.SIGNUP_SUCCESS;
+import static com.heyutang.common.Constants.*;
 
 /**
  * @author heBao
@@ -26,7 +30,6 @@ public class SignupFrame extends JFrame {
 
     private static SignupFrame instance = null;
 
-    UserDaoImpl userDao = new UserDaoImpl();
 
     private SignupFrame() {
         super("注册");
@@ -41,19 +44,34 @@ public class SignupFrame extends JFrame {
         signupBtn.addActionListener(e -> {
             String username = this.usernameField.getText();
             String password = this.passwordField.getText();
-            //将数据保存到数据库
-            boolean b = userDao.insertUser(new User(username, password));
-            if (b) {
-                JOptionPane.showMessageDialog(contentPane,
-                        SIGNUP_SUCCESS,
-                        "消息",
-                        JOptionPane.INFORMATION_MESSAGE);
-                dispose();
-            } else {
-                JOptionPane.showMessageDialog(contentPane,
-                        SIGNUP_FAILED,
-                        "消息",
-                        JOptionPane.INFORMATION_MESSAGE);
+            // 空校验
+            if ("".equals(username.trim()) && "".equals(password.trim())) {
+                JOptionPane.showMessageDialog(this, "用户名和密码不能为空");
+                return;
+            }
+            //todo 将对象发送给后端 将数据保存到数据库
+            try (
+                    Socket socket = new Socket("localhost", 8080);
+                    PrintWriter pw = new PrintWriter(socket.getOutputStream(), true);
+                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            ) {
+                pw.print(new User(username, password));
+                String reply = bufferedReader.readLine();
+                if ( SIGNUP_SUCCESS.equals(reply) ) {
+                    JOptionPane.showMessageDialog(contentPane,
+                            SIGNUP_SUCCESS,
+                            "消息",
+                            JOptionPane.INFORMATION_MESSAGE);
+                    dispose();
+                } else {
+                    JOptionPane.showMessageDialog(contentPane,
+                            SIGNUP_FAILED,
+                            "消息",
+                            JOptionPane.INFORMATION_MESSAGE);
+                }
+            } catch (IOException ex) {
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(this, "连接服务器失败");
             }
         });
 

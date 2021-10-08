@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.URL;
-import java.net.UnknownHostException;
 import java.util.Scanner;
 
 import static com.heyutang.common.Constants.*;

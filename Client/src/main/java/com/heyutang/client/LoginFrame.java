@@ -1,12 +1,15 @@
 package com.heyutang.client;
 
-import com.heyutang.Entiry.User;
 import com.heyutang.common.FrameCreators;
-import com.heyutang.dao.UserDao;
-import com.heyutang.dao.UserDaoImpl;
+import com.heyutang.entiy.User;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.*;
+import java.net.ConnectException;
+import java.net.Socket;
+
+import static com.heyutang.common.Constants.LOGIN_SUCCESS;
 
 
 /**
@@ -22,7 +25,7 @@ public class LoginFrame extends JFrame {
 
     private JButton signupBtn = null;
 
-    private UserDao userDao = new UserDaoImpl();
+//    private UserDao userDao = new UserDaoImpl();
 
     public LoginFrame() {
         super("登录");
@@ -51,12 +54,32 @@ public class LoginFrame extends JFrame {
         setVisible(true);
     }
 
-    public ClientFrame handleLogin(Component parent) {
+    public ClientFrame handleLogin(Component parent) throws IOException {
         String username = usernameField.getText();
         String password = passwordField.getText();
-        User user = userDao.selectByPassword(new User(username, password));
-        //登录成功
-        if (user != null) {
+        String reply = null;
+        // 空校验
+        if ("".equals(username.trim()) && "".equals(password.trim())) {
+            JOptionPane.showMessageDialog(this, "用户名和密码不能为空");
+            return null;
+        }
+        // todo 向服务端发送用户名和密码进行校验
+        try (
+                Socket socket = new Socket("localhost", 8080);
+                PrintWriter pw = new PrintWriter(socket.getOutputStream(), true);
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        ) {
+            pw.print(new User(username, password));
+            pw.flush();
+
+            reply = bufferedReader.readLine();
+        }catch (ConnectException ce){
+            ce.printStackTrace();
+            JOptionPane.showMessageDialog(this, "连接服务器失败");
+            return null;
+        }
+
+        if (LOGIN_SUCCESS.equals(reply)) {
             dispose();
             return new ClientFrame(username);
         } else {

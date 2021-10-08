@@ -43,5 +43,12 @@ public class Constants {
 
     public static final String ALL = "all";
 
+    public static final String LOGIN_SUCCESS = "login success";
+
+    public static final String LOGIN_FAILED = "login failed";
+
+    public static final String SUCCESS = "success";
+
+
 
 }
