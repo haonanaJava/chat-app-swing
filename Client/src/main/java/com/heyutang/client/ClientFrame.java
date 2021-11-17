@@ -1,11 +1,14 @@
 package com.heyutang.client;
 
+import com.heyutang.entity.User;
+
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.URL;
@@ -316,8 +319,9 @@ public class ClientFrame extends JFrame implements ActionListener {
             clientSocket = new Socket(HOST, PORT);
             // 加上自动刷新
             pw = new PrintWriter(clientSocket.getOutputStream(), true);
+
             // 向服务器报上自己的用户名
-            pw.println(userName);
+            pw.println(userName + DELIMITER + "login");
             this.setTitle("用户[ " + userName + " ]上线...");
 
             // 线程 接受服务器发来的消息---一直开着的

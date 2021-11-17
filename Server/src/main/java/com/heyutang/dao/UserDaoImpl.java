@@ -1,6 +1,6 @@
 package com.heyutang.dao;
 
-import com.heyutang.Entiry.User;
+import com.heyutang.entity.User;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 
 import javax.sql.DataSource;

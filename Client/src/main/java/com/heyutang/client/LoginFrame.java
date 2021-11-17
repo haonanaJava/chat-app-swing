@@ -1,15 +1,16 @@
 package com.heyutang.client;
 
 import com.heyutang.common.FrameCreators;
-import com.heyutang.entiy.User;
+import com.heyutang.entity.User;
 
 import javax.swing.*;
 import java.awt.*;
 import java.io.*;
 import java.net.ConnectException;
 import java.net.Socket;
+import java.util.Scanner;
 
-import static com.heyutang.common.Constants.LOGIN_SUCCESS;
+import static com.heyutang.common.Constants.*;
 
 
 /**
@@ -25,7 +26,6 @@ public class LoginFrame extends JFrame {
 
     private JButton signupBtn = null;
 
-//    private UserDao userDao = new UserDaoImpl();
 
     public LoginFrame() {
         super("登录");
@@ -64,16 +64,24 @@ public class LoginFrame extends JFrame {
             return null;
         }
         // todo 向服务端发送用户名和密码进行校验
-        try (
-                Socket socket = new Socket("localhost", 8080);
-                PrintWriter pw = new PrintWriter(socket.getOutputStream(), true);
-                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        ) {
-            pw.print(new User(username, password));
-            pw.flush();
+        try {
+            Socket socket = new Socket("localhost", PORT);
+            ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
 
-            reply = bufferedReader.readLine();
-        }catch (ConnectException ce){
+            oos.writeObject(new User(username, password));
+
+            InputStream is = socket.getInputStream();
+            Scanner sc = new Scanner(is);
+            while (sc.hasNextLine()) {
+                reply = sc.nextLine();
+                if (LOGIN_SUCCESS.equals(reply) || LOGIN_FAILED.equals(reply)) {
+                    break;
+                }
+            }
+            System.out.println(reply);
+
+
+        } catch (ConnectException ce) {
             ce.printStackTrace();
             JOptionPane.showMessageDialog(this, "连接服务器失败");
             return null;

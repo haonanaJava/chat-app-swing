@@ -1,6 +1,6 @@
 package com.heyutang.dao;
 
-import com.heyutang.Entiry.User;
+import com.heyutang.entity.User;
 
 /**
  * @author heBao

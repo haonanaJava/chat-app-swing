@@ -1,7 +1,7 @@
 package com.heyutang.client;
 
 import com.heyutang.common.FrameCreators;
-import com.heyutang.entiy.User;
+import com.heyutang.entity.User;
 
 import javax.swing.*;
 import java.awt.*;
@@ -11,8 +11,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
 import java.net.Socket;
 
 import static com.heyutang.common.Constants.*;
@@ -51,7 +49,7 @@ public class SignupFrame extends JFrame {
             }
             //todo 将对象发送给后端 将数据保存到数据库
             try (
-                    Socket socket = new Socket("localhost", 8080);
+                    Socket socket = new Socket("localhost", PORT);
                     PrintWriter pw = new PrintWriter(socket.getOutputStream(), true);
                     BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             ) {
